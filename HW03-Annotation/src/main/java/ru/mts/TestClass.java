@@ -24,7 +24,7 @@ public class TestClass {
 
     @Before
     public String toStringBefore() {
-        return "toStringBefore{ @Before" +
+        return "Method toStringBefore{ @Before" +
                 ", value='" + value + '\'' +
                 '}';
     }
@@ -32,12 +32,12 @@ public class TestClass {
     @Override
     @Test
     public String toString() {
-        return "toString{ @Test" +
+        return "Method toString{ @Test" +
                 ", value='" + value + '\'' +
                 '}';
     }
     @After
     public String toStringAfter() {
-        return "toStringAfter{ @After" + ", value='" + value + '\'' + '}';
+        return " Method toStringAfter{ @After" + ", value='" + value + '\'' + '}';
     }
 }
