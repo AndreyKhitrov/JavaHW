@@ -1,43 +1,34 @@
 package ru.mts;
 
 public class TestClass {
-
-    private String value = "initValue";
-
-    public TestClass() {
-    }
-
-    public TestClass(String value) throws Exception{
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        if (value.equals("")){
-            throw new NullPointerException();
-        }
-        this.value = value;
-    }
-
+    private Class<AndyClass> clazz = AndyClass.class;
+    private String value =clazz.getSimpleName();
+    private AndyClass myClass= new AndyClass(value);
+    private String valueNull = "";
     @Before
-    public String toStringBefore() {
-        return "Method toStringBefore{ @Before" +
+    public void printBefore() {
+        System.out.println( "Method printBefore{ @Before" +
                 ", value='" + value + '\'' +
-                '}';
+                '}');
     }
 
-    @Override
     @Test
-    public String toString() {
-        return "Method toString{ @Test" +
+    public void printTest() {
+        System.out.println( "Method printTest{ @Test" +
                 ", value='" + value + '\'' +
-                '}';
+                '}');
     }
+
+    @Test
+    public void printTestNull() {
+        myClass.setValue(valueNull);
+        System.out.println( "Method printTestNull{ @Test" +
+                ", value='" + value + '\'' +
+                '}');
+    }
+
     @After
-    public String toStringAfter() {
-        return " Method toStringAfter{ @After" + ", value='" + value + '\'' + '}';
+    public void printAfter() {
+        System.out.println( " Method printAfter{ @After" + ", value='" + value + '\'' + '}');
     }
 }

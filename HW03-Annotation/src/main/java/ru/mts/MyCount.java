@@ -23,10 +23,14 @@ public class MyCount {
     public void addCount_all() {
         this.count_all++;
     }
-    public void printCounts(){
-        System.out.println("count_plus= "+Integer.toString(count_plus) +
+
+    public void printCounts() {
+        System.out.println("count_plus= " + Integer.toString(count_plus) +
                 ";  count_minus= " + Integer.toString(count_minus) +
                 ";  count_all= " + Integer.toString(count_all));
-        System.out.println("End test");
+    }
+
+    public void setCount_all(int count_all) {
+        this.count_all = count_all;
     }
 }

@@ -2,39 +2,79 @@ package ru.mts;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyMethods {
-    public MyMethods() {
+    private Class clazz;
+    private MyCount myCount;
+
+    public MyMethods(String nameClass) throws Exception {
+        clazz = Class.forName(nameClass);
+        myCount = new MyCount();
     }
 
-    public static void methodTest(MyCount myCount) throws NoSuchMethodException {
-        Class<TestClass> clazz = TestClass.class;
-        Method before = clazz.getMethod("toStringBefore");
-        Annotation[] beforeAnn = before.getDeclaredAnnotations();
-        System.out.println("Method toStringBefore with annotation " + Arrays.toString(beforeAnn));
-        Method method = clazz.getMethod("toString");
-        Annotation[] annotations = method.getDeclaredAnnotations();
-        System.out.println("Method toString with annotation " + Arrays.toString(annotations));
-        Method after = clazz.getMethod("toStringAfter");
-        Annotation[] afterAnn = after.getDeclaredAnnotations();
-        System.out.println("Method toStringAfter with annotation " + Arrays.toString(afterAnn));
-        myCount.addCount_plus();
-        myCount.addCount_all();
+    public MyCount startFw() throws Exception {
+        Method[] metAll = clazz.getDeclaredMethods();
+        var metBefore = new ArrayList<Method>(20);
+        var metTest = new ArrayList<Method>(20);
+        var metAfter = new ArrayList<Method>(20);
+        for (Method method : metAll) {
+            Annotation[] annotations = method.getDeclaredAnnotations();
+            for (Annotation annotation : annotations) {
+                if (annotation.annotationType().equals(Before.class)) metBefore.add(method);
+                if (annotation.annotationType().equals(Test.class)) metTest.add(method);
+                if (annotation.annotationType().equals(After.class)) metAfter.add(method);
+            }
+        }
+        System.out.println("Before methods: ");
+        metBefore.forEach(c -> System.out.println(c.getName()));
+        System.out.println("Test methods: ");
+        metTest.forEach(c -> System.out.println(c.getName()));
+        System.out.println("After methods: ");
+        metAfter.forEach(c -> System.out.println(c.getName()));
+        return runFw(metBefore, metTest, metAfter);
     }
-    public static void method2Test(MyCount myCount) throws Exception {
-        TestClass testClass = new TestClass("Run TestClass");
-        System.out.println(testClass.toStringBefore());
-        System.out.println(testClass.toString());
-        System.out.println(testClass.toStringAfter());
-        myCount.addCount_plus();
-        myCount.addCount_all();
+
+    private MyCount runFw(List<Method> metBefore, List<Method> metTest, List<Method> metAfter) throws Exception {
+        myCount.setCount_all(metTest.size());
+        var object = clazz.getConstructor().newInstance();
+        for (int i = 0; i < metTest.size(); i++) {
+            Method methodTest = metTest.get(i);
+            try {
+                for (int y = 0; y < metBefore.size(); y++) {
+                    Method methodBefore = metBefore.get(y);
+                    myInvoke(methodBefore, 0, object);
+                }
+                try {
+                    myInvoke(methodTest, 1, object);
+                } catch (Exception e) {
+                    System.out.println("Exception 'minus' " + methodTest.getName() + " " + e);
+                }
+            } catch (Exception e) {
+                System.out.println("Exception 'for' " + methodTest.getName() + " " + e);
+            } finally {
+                for (int x = 0; x < metAfter.size(); x++) {
+                    Method methodAfter = metAfter.get(x);
+                    myInvoke(methodAfter, 0, object);
+                }
+            }
+
+        }
+        return myCount;
     }
-    public static void method3Test(MyCount myCount){
-        String name="";
-        TestClass testExc = new TestClass();
-        testExc.setValue(name);
-        myCount.addCount_plus();
-        myCount.addCount_all();
+    private void myInvoke(Method method, int i, Object object) throws Exception {
+        try {
+            method.setAccessible(true);
+            method.invoke(object);
+            if (i == 1) {
+                myCount.addCount_plus();
+            }
+        } catch (Exception e) {
+            System.out.println("Exception 'myInvoke' " + method.getName() + " " + e);
+            if (i == 1) {
+                myCount.addCount_minus();
+            }
+        }
     }
 }

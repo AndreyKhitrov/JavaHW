@@ -1,34 +1,17 @@
 package ru.mts;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
 public class Starter {
     public static void main(String[] args) throws Exception {
-        MyCount myCountMain = new MyCount();
-        MyMethods myMethods =new MyMethods();
+        System.out.println("Start tests");
         try {
-            myMethods.methodTest(myCountMain);
-            myMethods.method2Test(myCountMain);
-            myMethods.method3Test(myCountMain);
+            String nameClass = "ru.mts.TestClass";
+            MyCount myCount = (MyCount) new MyMethods(nameClass).startFw();
+            myCount.printCounts();
+        } catch (Exception e) {
+            System.out.println("Exception " + e);
+            System.out.println("Test failure!");
+        } finally {
+            System.out.println("Tests finished");
         }
-        catch (NullPointerException e)
-        {
-            System.out.println("Exception NullPointerException: " + e);
-            myCountMain.addCount_minus();
-            myCountMain.addCount_all();
-        }
-        catch (Exception e)
-        {
-            System.out.println("Exception: " + e);
-            myCountMain.addCount_minus();
-            myCountMain.addCount_all();
-        }
-        finally {
-            myCountMain.printCounts();
-        }
-        //TestClass testClass1 = new TestClass("");
-
     }
 }
